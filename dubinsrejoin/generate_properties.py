@@ -79,9 +79,8 @@ def write_vnnlib_file(case_n, result, state, targets, noise_frac):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='Specification Generrator: vnnlib format',
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--seed',type = int,default= 0, help='seed is selected for image selection')
+    parser = argparse.ArgumentParser(description='Specification Generrator: vnnlib format')
+    parser.add_argument('seed', type = int, help='seed is selected for image selection')
     args = parser.parse_args()
 
 
@@ -95,7 +94,7 @@ if __name__ == "__main__":
             lines.append(line.strip().split('\t'))
 
     row = lines[idx+1]
-    import pdb; pdb.set_trace()
+
     state = [float(x) for x in row[3][1:-1].split(',')]
 
     try:
