@@ -38,25 +38,34 @@ def write_vnnlib_file(case_n, result, state, targets, noise_frac):
         fp.write(f"; unsafe if command is {targets} (spec type {spec_type}) \n")
         
         if spec_type == "minimal":
-            for i in range(num_commands):
-                if target == i: continue
+            if num_commands == 2:
                 spec = "(assert \n"
                 spec = spec + f"(and (>= Y_{i} Y_{target}))\n"
+            else:
+                for i in range(num_commands):
+                    if target == i: continue
+                    spec = "(assert \n"
+                    spec = spec + f"(and (>= Y_{i} Y_{target}))\n"
+                spec = spec + ")\n"
                     
         elif spec_type == "maximal":
-            for i in range(num_commands):
-                if target == i: continue
-                
+            if num_commands == 2:
                 spec = "(assert \n"
-                spec = spec + f"(<= Y_{i} Y_{target}))\n" 
+                spec = spec + f"(and (<= Y_{i} Y_{target}))\n" 
+            else:
+                for i in range(num_commands):
+                    if target == i: continue
+                    
+                    spec = "(assert \n"
+                    spec = spec + f"(<= Y_{i} Y_{target}))\n" 
+            spec = spec + ")\n"
 
         elif spec_type == "disjunct":
-            # just hardcode it here 
             spec = "(assert or \n"
 
             for target in targets:
                 target_j = target // 4
-                target_k = target % 4    
+                target_k = target % 4   
 
                 spec += tab + "( and "
                 for j in range(4):
@@ -66,7 +75,7 @@ def write_vnnlib_file(case_n, result, state, targets, noise_frac):
                 
                 for k in range(4,8):
                     if target_k + 4 == k:  continue
-                    spec_k = f"(<= Y_{k} Y_{target_k}) "
+                    spec_k = f"(<= Y_{k} Y_{target_k+4}) " 
                     spec += spec_k
                 spec += tab + ")\n"
             spec += ")\n"
