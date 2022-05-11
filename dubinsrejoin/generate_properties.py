@@ -20,7 +20,7 @@ def write_vnnlib_file(case_n, result, state, targets, noise_frac):
         fp.write('\n')
 
         for i in range(num_commands):
-            fp.write(f"(declare-const Y_{i} Real\n")
+            fp.write(f"(declare-const Y_{i} Real)\n")
         fp.write('\n')
 
         # Now the input noise_frac
@@ -29,8 +29,8 @@ def write_vnnlib_file(case_n, result, state, targets, noise_frac):
             x_max = state[i] + noise_frac
             # TODO FOR THE ANGLES, WRAP AROUND 2PI
             fp.write(f"; Input {i}\n")
-            fp.write(f"(assert <= X_{i} {x_max}\n")
-            fp.write(f"(assert >= X_{i} {x_min}\n")
+            fp.write(f"(assert (<= X_{i} {x_max}))\n")
+            fp.write(f"(assert (>= X_{i} {x_min}))\n")
             fp.write('\n')
 
 
@@ -48,7 +48,7 @@ def write_vnnlib_file(case_n, result, state, targets, noise_frac):
                 if target == i: continue
                 
                 spec = "(assert \n"
-                spec = spec + f"(and (<= Y_{i} Y_{target}))\n" 
+                spec = spec + f"(<= Y_{i} Y_{target}))\n" 
 
         elif spec_type == "disjunct":
             # just hardcode it here 

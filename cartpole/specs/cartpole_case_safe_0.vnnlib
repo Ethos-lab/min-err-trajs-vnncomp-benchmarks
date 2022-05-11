@@ -5,25 +5,25 @@
 (declare-const X_2 Real)
 (declare-const X_3 Real)
 
-(declare-const Y_0 Real
-(declare-const Y_1 Real
+(declare-const Y_0 Real)
+(declare-const Y_1 Real)
 
 ; Input 0
-(assert <= X_0 0.001
-(assert >= X_0 -0.001
+(assert (<= X_0 0.001))
+(assert (>= X_0 -0.001))
 
 ; Input 1
-(assert <= X_1 0.001
-(assert >= X_1 -0.001
+(assert (<= X_1 0.001))
+(assert (>= X_1 -0.001))
 
 ; Input 2
-(assert <= X_2 0.001
-(assert >= X_2 -0.001
+(assert (<= X_2 0.001))
+(assert (>= X_2 -0.001))
 
 ; Input 3
-(assert <= X_3 0.001
-(assert >= X_3 -0.001
+(assert (<= X_3 0.001))
+(assert (>= X_3 -0.001))
 
 ; unsafe if command is [0] (spec type maximal) 
 (assert 
-(and (<= Y_1 Y_0))
+(<= Y_1 Y_0))
