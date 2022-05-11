@@ -10,7 +10,7 @@ spec_type = "disjunct"
 def write_vnnlib_file(case_n, result, state, targets, noise_frac):
     tab = "\t"
 
-    with open(os.path.join("specs", "dubins_case_"+str(case_n))+".spec", 'w') as fp:
+    with open(os.path.join("specs", "dubins_case_"+str(case_n))+".vnnlib", 'w') as fp:
 
         fp.write(f"; {env} Rejoin property " + str(case_n))
         fp.write('\n\n')
