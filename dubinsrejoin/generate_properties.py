@@ -1,6 +1,5 @@
 import argparse
 import os
-import pandas as pd
 
 env = "Dubins"
 num_inputs = 8
@@ -90,16 +89,20 @@ if __name__ == "__main__":
 
 
     # Load csv of all options
-    df = pd.read_csv("nnenum_details.txt", sep='\t')
+    lines = []
+    with open("nnenum_details.txt", "r") as fp:
+        for line in fp:
+            lines.append(line.strip().split('\t'))
 
-    row = df.iloc[idx]
-    state = [float(x) for x in row.STATE[1:-1].split(',')]
+    row = lines[idx+1]
+    import pdb; pdb.set_trace()
+    state = [float(x) for x in row[3][1:-1].split(',')]
 
     try:
-        commands = [int(row.COMMAND)]
+        commands = [int(row[5])]
     except:
-        commands = [int(x) for x in row.COMMAND[1:-1].split(',')]
+        commands = [int(x) for x in row[5][1:-1].split(',')]
 
-    write_vnnlib_file(row.RES+"_"+str(idx), row.RES, state, commands, row.NOISE_FRAC)
+    write_vnnlib_file(row[0]+"_"+str(idx), row[0], state, commands, float(row[1]))
 
 
