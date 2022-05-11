@@ -1,16 +1,30 @@
 import argparse
 import os
 
-env = "Dubins"
-num_inputs = 8
-num_commands = 16
-spec_type = "disjunct"
+env = "cartpole"
+num_inputs = 4
+num_commands = 2
+spec_type = "maximal"
 
+"""
+
+nnenum_details_file = "cartpole10/nnenum_details.txt"
+data = pd.read_csv(nnenum_details, sep='\t') # has fields: RES, TIME, STATE, COUNTEREXAMPLE (or None), CMD
+
+# Sort by time 
+data.sort_values("TIME")
+
+import pdb; pdb.set_trace()
+
+
+exit(0)
+
+"""
 
 def write_vnnlib_file(case_n, result, state, targets, noise_frac):
     tab = "\t"
 
-    with open(os.path.join("specs", "dubins_case_"+str(case_n))+".vnnlib", 'w') as fp:
+    with open(os.path.join("specs", "cartpole_case_"+str(case_n))+".vnnlib", 'w') as fp:
 
         fp.write(f"; {env} Rejoin property " + str(case_n))
         fp.write('\n\n')
@@ -38,12 +52,14 @@ def write_vnnlib_file(case_n, result, state, targets, noise_frac):
         fp.write(f"; unsafe if command is {targets} (spec type {spec_type}) \n")
         
         if spec_type == "minimal":
+            target = targets[0]
             for i in range(num_commands):
                 if target == i: continue
                 spec = "(assert \n"
                 spec = spec + f"(and (>= Y_{i} Y_{target}))\n"
                     
         elif spec_type == "maximal":
+            target = targets[0]
             for i in range(num_commands):
                 if target == i: continue
                 
