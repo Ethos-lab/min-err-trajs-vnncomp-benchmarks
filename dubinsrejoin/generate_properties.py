@@ -1,4 +1,6 @@
 import argparse
+import os
+import pandas as pd
 
 env = "Dubins"
 num_inputs = 8
@@ -75,8 +77,10 @@ def write_vnnlib_file(case_n, result, state, targets, noise_frac):
 
         fp.write(spec)
 
+
 if __name__ == "__main__":
-	parser = argparse.ArgumentParser(description='Specification Generrator: vnnlib format',
+
+    parser = argparse.ArgumentParser(description='Specification Generrator: vnnlib format',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--seed',type = int,default= 0, help='seed is selected for image selection')
     args = parser.parse_args()
@@ -91,6 +95,11 @@ if __name__ == "__main__":
     row = df.iloc[idx]
     state = [float(x) for x in row.STATE[1:-1].split(',')]
 
-    write_vnnlib_file("unsafe_"+str(i), "unsafe", state, [int(row.COMMAND)], row.NOISE_FRAC)
+    try:
+        commands = [int(row.COMMAND)]
+    except:
+        commands = [int(x) for x in row.COMMAND[1:-1].split(',')]
+
+    write_vnnlib_file(row.RES+"_"+str(idx), row.RES, state, commands, row.NOISE_FRAC)
 
 
