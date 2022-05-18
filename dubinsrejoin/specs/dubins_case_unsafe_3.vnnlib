@@ -59,6 +59,6 @@
 (assert (>= X_7 0.46225109691429495))
 
 ; unsafe if command is [13] (spec type disjunct) 
-(assert or 
-	( and (<= Y_0 Y_3) (<= Y_1 Y_3) (<= Y_2 Y_3) (<= Y_4 Y_5) (<= Y_6 Y_5) (<= Y_7 Y_5) 	)
-)
+(assert (or 
+	(and (<= Y_0 Y_3)(<= Y_1 Y_3)(<= Y_2 Y_3)(<= Y_4 Y_5)(<= Y_6 Y_5)(<= Y_7 Y_5))
+))

@@ -61,24 +61,24 @@ def write_vnnlib_file(case_n, result, state, targets, noise_frac):
             spec = spec + ")\n"
 
         elif spec_type == "disjunct":
-            spec = "(assert or \n"
+            spec = "(assert (or \n"
 
             for target in targets:
                 target_j = target // 4
                 target_k = target % 4   
 
-                spec += tab + "( and "
+                spec += tab + "(and "
                 for j in range(4):
                     if target_j == j:  continue
-                    spec_j = f"(<= Y_{j} Y_{target_j}) "
+                    spec_j = f"(<= Y_{j} Y_{target_j})"
                     spec += spec_j
                 
                 for k in range(4,8):
                     if target_k + 4 == k:  continue
-                    spec_k = f"(<= Y_{k} Y_{target_k+4}) " 
+                    spec_k = f"(<= Y_{k} Y_{target_k+4})" 
                     spec += spec_k
-                spec += tab + ")\n"
-            spec += ")\n"
+                spec += ")\n"
+            spec += "))\n"
 
         else:
             raise NotImplementedError("unnknown spec_type " + str(spec_type))
