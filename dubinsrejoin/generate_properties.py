@@ -1,9 +1,10 @@
 import argparse
 import os
+import random
 
 env = "Dubins"
 num_inputs = 8
-num_commands = 16
+num_commands = 8
 spec_type = "disjunct"
 
 
@@ -96,7 +97,9 @@ if __name__ == "__main__":
         os.makedirs('specs')
 
     idx = args.seed
-
+    # Also use the see for random amount of noise - 
+    random.seed(idx)
+    
 
     # Load csv of all options
     lines = []
@@ -112,7 +115,9 @@ if __name__ == "__main__":
         commands = [int(row[5])]
     except:
         commands = [int(x) for x in row[5][1:-1].split(',')]
+        if len(commands) < 15:  print(f"NICE, FOUND LEN: {len(commands)} FOR IX: {row[0]}_{idx}")
 
+    noise_frac = str(float(row[1]) + random.uniform(0, 0.01))
     write_vnnlib_file(row[0]+"_"+str(idx), row[0], state, commands, float(row[1]))
 
 

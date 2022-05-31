@@ -1,4 +1,4 @@
-; Dubins Rejoin property unsafe_12
+; Dubins Rejoin property unsafe_7
 
 (declare-const X_0 Real)
 (declare-const X_1 Real)
@@ -50,7 +50,7 @@
 (assert (<= X_7 -0.38354713538150864))
 (assert (>= X_7 -0.5835471353815086))
 
-; unsafe if command is [1] (spec type disjunct) 
+; unsafe if command is [2] (spec type disjunct) 
 (assert (or 
-	(and (<= Y_1 Y_0)(<= Y_2 Y_0)(<= Y_3 Y_0)(<= Y_4 Y_5)(<= Y_6 Y_5)(<= Y_7 Y_5))
+	(and (<= Y_1 Y_0)(<= Y_2 Y_0)(<= Y_3 Y_0)(<= Y_4 Y_6)(<= Y_5 Y_6)(<= Y_7 Y_6))
 ))
