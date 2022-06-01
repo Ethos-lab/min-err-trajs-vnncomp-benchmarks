@@ -1,6 +1,7 @@
 import argparse
 import os
 import random
+import math
 
 env = "Dubins"
 num_inputs = 8
@@ -86,6 +87,10 @@ def write_vnnlib_file(case_n, result, state, targets, noise_frac):
 
         fp.write(spec)
 
+def add_to_instances(filename, model_file, timeout):
+    with open("instances.csv", "a") as fp:
+        fp.write(f"{filename}.vnnlib,{model_file},{timeout}\n")
+
 
 if __name__ == "__main__":
 
@@ -96,9 +101,9 @@ if __name__ == "__main__":
     if not os.path.exists('specs'):
         os.makedirs('specs')
 
-    idx = args.seed
-    # Also use the see for random amount of noise - 
-    random.seed(idx)
+    seed = args.seed
+    # Use seed for random amount of noise
+    random.seed(seed)
     
 
     # Load csv of all options
@@ -107,17 +112,29 @@ if __name__ == "__main__":
         for line in fp:
             lines.append(line.strip().split('\t'))
 
-    row = lines[idx+1]
+    if os.path.exists("instances.csv"):  os.remove("instances.csv")
 
-    state = [float(x) for x in row[3][1:-1].split(',')]
 
-    try:
-        commands = [int(row[5])]
-    except:
-        commands = [int(x) for x in row[5][1:-1].split(',')]
-        if len(commands) < 15:  print(f"NICE, FOUND LEN: {len(commands)} FOR IX: {row[0]}_{idx}")
+    for i, row in enumerate(lines[1:]):
 
-    noise_frac = str(float(row[1]) + random.uniform(0, 0.01))
-    write_vnnlib_file(row[0]+"_"+str(idx), row[0], state, commands, float(row[1]))
+        state = [float(x) for x in row[3][1:-1].split(',')]
+
+        try:
+            commands = [int(row[5])]
+        except:
+            commands = [int(x) for x in row[5][1:-1].split(',')]
+
+        noise_frac = str(float(row[1]) + random.uniform(0, 0.01))
+        write_vnnlib_file(row[0]+"_"+str(i), row[0], state, commands, float(row[1]))
+
+        # Also add to instances.csv:
+        # With a random timeout that's based on seed. Add a random amount that's a multiple of it. 
+        timeout = float(row[2])
+        timeout =  random.uniform(1.0, 1.5)*timeout
+        timeout = math.ceil(timeout)
+        # But there are many that are just 1 now -- if so, make it random<10:
+        if timeout == 1:  timeout = random.randint(1, 10)
+
+        add_to_instances(row[0]+"_"+str(i), "model.onnx", timeout)
 
 
