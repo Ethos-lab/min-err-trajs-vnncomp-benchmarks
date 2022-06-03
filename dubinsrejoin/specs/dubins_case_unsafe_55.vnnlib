@@ -1,4 +1,4 @@
-; Dubins Rejoin property unsafe_55
+; dubins LunarLander property unsafe_55
 
 (declare-const X_0 Real)
 (declare-const X_1 Real)

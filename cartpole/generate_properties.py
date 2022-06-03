@@ -1,32 +1,20 @@
 import argparse
 import os
+import random 
+import math
 
 env = "cartpole"
 num_inputs = 4
 num_commands = 2
 spec_type = "maximal"
 
-"""
-
-nnenum_details_file = "cartpole10/nnenum_details.txt"
-data = pd.read_csv(nnenum_details, sep='\t') # has fields: RES, TIME, STATE, COUNTEREXAMPLE (or None), CMD
-
-# Sort by time 
-data.sort_values("TIME")
-
-import pdb; pdb.set_trace()
-
-
-exit(0)
-
-"""
 
 def write_vnnlib_file(case_n, result, state, targets, noise_frac):
     tab = "\t"
 
-    with open(os.path.join("specs", "cartpole_case_"+str(case_n))+".vnnlib", 'w') as fp:
+    with open(os.path.join("specs", env+"_case_"+str(case_n))+".vnnlib", 'w') as fp:
 
-        fp.write(f"; {env} Rejoin property " + str(case_n))
+        fp.write(f"; {env} LunarLander property " + str(case_n))
         fp.write('\n\n')
 
         for i in range(num_inputs):
@@ -53,25 +41,27 @@ def write_vnnlib_file(case_n, result, state, targets, noise_frac):
         
         if spec_type == "minimal":
             if num_commands == 2:
+                i = targets ^ 1
                 spec = "(assert \n"
-                spec = spec + f"(and (>= Y_{i} Y_{target}))\n"
+                spec = spec + f"(and (>= Y_{i} Y_{targets}))\n"
             else:
                 for i in range(num_commands):
-                    if target == i: continue
+                    if targets == i: continue
                     spec = "(assert \n"
-                    spec = spec + f"(and (>= Y_{i} Y_{target}))\n"
+                    spec = spec + f"(and (>= Y_{i} Y_{targets}))\n"
                 spec = spec + ")\n"
                     
         elif spec_type == "maximal":
             if num_commands == 2:
+                i = targets ^ 1
                 spec = "(assert \n"
-                spec = spec + f"(and (<= Y_{i} Y_{target}))\n" 
+                spec = spec + f"(<= Y_{i} Y_{targets})\n" 
             else:
                 for i in range(num_commands):
-                    if target == i: continue
+                    if targets == i: continue
                     
                     spec = "(assert \n"
-                    spec = spec + f"(<= Y_{i} Y_{target}))\n" 
+                    spec = spec + f"(<= Y_{i} Y_{targets})\n" 
             spec = spec + ")\n"
             
 
@@ -101,18 +91,23 @@ def write_vnnlib_file(case_n, result, state, targets, noise_frac):
 
         fp.write(spec)
 
+def add_to_instances(filename, model_file, timeout):
+    with open("instances.csv", "a") as fp:
+        fp.write(f"{env}_case_{filename}.vnnlib,{model_file},{timeout}\n")
+
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Specification Generrator: vnnlib format')
-    parser.add_argument('seed', type = int, help='seed is selected for image selection')
+    parser.add_argument('seed', type = int, help='seed is used for random noise limit and timeout for each instance')
     args = parser.parse_args()
 
     if not os.path.exists('specs'):
         os.makedirs('specs')
 
-    idx = args.seed
-
+    seed = args.seed
+    # Use seed for random amount of noise
+    random.seed(seed)    
 
     # Load csv of all options
     lines = []
@@ -120,15 +115,26 @@ if __name__ == "__main__":
         for line in fp:
             lines.append(line.strip().split('\t'))
 
-    row = lines[idx+1]
+    if os.path.exists("instances.csv"):  os.remove("instances.csv")
 
-    state = [float(x) for x in row[3][1:-1].split(',')]
 
-    try:
-        commands = [int(row[5])]
-    except:
-        commands = [int(x) for x in row[5][1:-1].split(',')]
+    for i, row in enumerate(lines[1:]):
 
-    write_vnnlib_file(row[0]+"_"+str(idx), row[0], state, commands, float(row[1]))
+        state = [float(x) for x in row[3][1:-1].split(',')]
+
+        commands = int(row[5])
+
+        noise_frac = str(float(row[1]) + random.uniform(0, 0.01))
+        write_vnnlib_file(row[0]+"_"+str(i), row[0], state, commands, float(row[1]))
+
+        # Also add to instances.csv:
+        # With a random timeout that's based on seed. Add a random amount that's a multiple of it. 
+        timeout = float(row[2])
+        timeout =  random.uniform(1.0, 1.5)*timeout
+        timeout = math.ceil(timeout)
+        # But there are many that are just 1 now -- if so, make it random<10:
+        if timeout == 1:  timeout = random.randint(1, 10)
+
+        add_to_instances(row[0]+"_"+str(i), "model.onnx", timeout)
 
 

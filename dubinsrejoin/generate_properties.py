@@ -3,7 +3,7 @@ import os
 import random
 import math
 
-env = "Dubins"
+env = "dubins"
 num_inputs = 8
 num_commands = 8
 spec_type = "disjunct"
@@ -12,9 +12,9 @@ spec_type = "disjunct"
 def write_vnnlib_file(case_n, result, state, targets, noise_frac):
     tab = "\t"
 
-    with open(os.path.join("specs", "dubins_case_"+str(case_n))+".vnnlib", 'w') as fp:
+    with open(os.path.join("specs", env+"_case_"+str(case_n))+".vnnlib", 'w') as fp:
 
-        fp.write(f"; {env} Rejoin property " + str(case_n))
+        fp.write(f"; {env} LunarLander property " + str(case_n))
         fp.write('\n\n')
 
         for i in range(num_inputs):
@@ -41,40 +41,45 @@ def write_vnnlib_file(case_n, result, state, targets, noise_frac):
         
         if spec_type == "minimal":
             if num_commands == 2:
+                i = targets ^ 1
                 spec = "(assert \n"
-                spec = spec + f"(and (>= Y_{i} Y_{target}))\n"
+                spec = spec + f"(and (>= Y_{i} Y_{targets}))\n"
             else:
                 for i in range(num_commands):
-                    if target == i: continue
+                    if targets == i: continue
                     spec = "(assert \n"
-                    spec = spec + f"(and (>= Y_{i} Y_{target}))\n"
+                    spec = spec + f"(and (>= Y_{i} Y_{targets}))\n"
                 spec = spec + ")\n"
                     
         elif spec_type == "maximal":
             if num_commands == 2:
+                i = targets ^ 1
                 spec = "(assert \n"
-                spec = spec + f"(and (<= Y_{i} Y_{target}))\n" 
+                spec = spec + f"(and (<= Y_{i} Y_{targets}))\n" 
             else:
                 for i in range(num_commands):
-                    if target == i: continue
+                    if targets == i: continue
                     
                     spec = "(assert \n"
-                    spec = spec + f"(<= Y_{i} Y_{target}))\n" 
+                    spec = spec + f"(<= Y_{i} Y_{targets})\n" 
             spec = spec + ")\n"
+            
 
         elif spec_type == "disjunct":
+            # just hardcode it here 
             spec = "(assert (or \n"
-
+ 
             for target in targets:
                 target_j = target // 4
                 target_k = target % 4   
-
+ 
                 spec += tab + "(and "
+
                 for j in range(4):
                     if target_j == j:  continue
                     spec_j = f"(<= Y_{j} Y_{target_j})"
                     spec += spec_j
-                
+                 
                 for k in range(4,8):
                     if target_k + 4 == k:  continue
                     spec_k = f"(<= Y_{k} Y_{target_k+4})" 
@@ -89,13 +94,13 @@ def write_vnnlib_file(case_n, result, state, targets, noise_frac):
 
 def add_to_instances(filename, model_file, timeout):
     with open("instances.csv", "a") as fp:
-        fp.write(f"dubins_case_{filename}.vnnlib,{model_file},{timeout}\n")
+        fp.write(f"{env}_case_{filename}.vnnlib,{model_file},{timeout}\n")
 
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Specification Generrator: vnnlib format')
-    parser.add_argument('seed', type = int, help='seed is selected for image selection')
+    parser.add_argument('seed', type = int, help='seed is used for random noise limit and timeout for each instance')
     args = parser.parse_args()
 
     if not os.path.exists('specs'):

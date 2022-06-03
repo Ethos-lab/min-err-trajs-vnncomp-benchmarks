@@ -1,0 +1,56 @@
+; dubins LunarLander property safe_98
+
+(declare-const X_0 Real)
+(declare-const X_1 Real)
+(declare-const X_2 Real)
+(declare-const X_3 Real)
+(declare-const X_4 Real)
+(declare-const X_5 Real)
+(declare-const X_6 Real)
+(declare-const X_7 Real)
+
+(declare-const Y_0 Real)
+(declare-const Y_1 Real)
+(declare-const Y_2 Real)
+(declare-const Y_3 Real)
+(declare-const Y_4 Real)
+(declare-const Y_5 Real)
+(declare-const Y_6 Real)
+(declare-const Y_7 Real)
+
+; Input 0
+(assert (<= X_0 0.021867061401353402))
+(assert (>= X_0 -0.1691329385986466))
+
+; Input 1
+(assert (<= X_1 0.29019125193023276))
+(assert (>= X_1 0.09919125193023273))
+
+; Input 2
+(assert (<= X_2 -0.4696976222854826))
+(assert (>= X_2 -0.6606976222854827))
+
+; Input 3
+(assert (<= X_3 0.19873546068735953))
+(assert (>= X_3 0.007735460687359544))
+
+; Input 4
+(assert (<= X_4 0.5954999999999998))
+(assert (>= X_4 0.40449999999999986))
+
+; Input 5
+(assert (<= X_5 0.09550000000000004))
+(assert (>= X_5 -0.09549999999999996))
+
+; Input 6
+(assert (<= X_6 0.42048538038295435))
+(assert (>= X_6 0.22948538038295438))
+
+; Input 7
+(assert (<= X_7 -0.284479608054625))
+(assert (>= X_7 -0.47547960805462497))
+
+; unsafe if command is [5] (spec type disjunct) 
+(assert (or 
+	(and (<= Y_0 Y_1)(<= Y_2 Y_1)(<= Y_3 Y_1)(<= Y_4 Y_5)(<= Y_6 Y_5)(<= Y_7 Y_5))
+))

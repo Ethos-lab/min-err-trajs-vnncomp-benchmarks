@@ -1,4 +1,4 @@
-; Dubins Rejoin property safe_1
+; dubins LunarLander property safe_1
 
 (declare-const X_0 Real)
 (declare-const X_1 Real)
