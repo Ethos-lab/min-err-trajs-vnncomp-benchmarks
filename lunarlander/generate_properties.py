@@ -9,10 +9,10 @@ num_commands = 4
 spec_type = "maximal"
 
 
-def write_vnnlib_file(case_n, result, state, targets, noise_frac):
+def write_vnnlib_file(specdir, case_n, result, state, targets, noise_frac):
     tab = "\t"
 
-    with open(os.path.join("specs", env+"_case_"+str(case_n))+".vnnlib", 'w') as fp:
+    with open(os.path.join(specdir, env+"_case_"+str(case_n))+".vnnlib", 'w') as fp:
 
         fp.write(f"; {env} LunarLander property " + str(case_n))
         fp.write('\n\n')
@@ -102,8 +102,10 @@ if __name__ == "__main__":
     parser.add_argument('seed', type = int, help='seed is selected for image selection')
     args = parser.parse_args()
 
-    if not os.path.exists('specs'):
-        os.makedirs('specs')
+    specdir = "specs"
+
+    if not os.path.exists(specdir):
+        os.makedirs(specdir)
 
     seed = args.seed
     # Use seed for random amount of noise
@@ -125,8 +127,8 @@ if __name__ == "__main__":
 
         commands = int(row[5])
 
-        noise_frac = str(float(row[1]) + random.uniform(0, 0.01))
-        write_vnnlib_file(row[0]+"_"+str(i), row[0], state, commands, float(row[1]))
+        noise_frac = float(row[1]) + random.uniform(0, 0.01)
+        write_vnnlib_file(specdir, row[0]+"_"+str(i), row[0], state, commands, noise_frac)
 
         # Also add to instances.csv:
         # With a random timeout that's based on seed. Add a random amount that's a multiple of it. 

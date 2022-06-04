@@ -124,8 +124,8 @@ if __name__ == "__main__":
 
         commands = int(row[5])
 
-        noise_frac = str(float(row[1]) + random.uniform(0, 0.01))
-        write_vnnlib_file(row[0]+"_"+str(i), row[0], state, commands, float(row[1]))
+        noise_frac = float(row[1]) + random.uniform(0, 0.01)
+        write_vnnlib_file(row[0]+"_"+str(i), row[0], state, commands, noise_frac)
 
         # Also add to instances.csv:
         # With a random timeout that's based on seed. Add a random amount that's a multiple of it. 
