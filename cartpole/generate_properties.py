@@ -93,7 +93,7 @@ def write_vnnlib_file(case_n, result, state, targets, noise_frac):
 
 def add_to_instances(filename, model_file, timeout):
     with open("instances.csv", "a") as fp:
-        fp.write(f"{env}_case_{filename}.vnnlib,{model_file},{timeout}\n")
+        fp.write(f"{model_file},{env}_case_{filename}.vnnlib,{timeout}\n")
 
 
 if __name__ == "__main__":
