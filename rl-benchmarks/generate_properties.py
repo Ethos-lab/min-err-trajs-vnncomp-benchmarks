@@ -154,7 +154,8 @@ if __name__ == "__main__":
             # Also add to instances.csv:
             # With a random timeout that's based on seed. Add a random amount that's a multiple of it, up to 400%
             timeout = float(row[2])
-            timeout =  random.uniform(1.0, 30.0)*timeout
+            timeout =  random.uniform(1.0, 20.0)*timeout
+            timeout = max(timeout, 30)  # at least 30 seconds though
             timeout = math.ceil(timeout)  # integer
             # But there are many that are just 1 now -- if so, make it random<10:
             # if timeout == 1:  timeout = random.randint(1, 10)
